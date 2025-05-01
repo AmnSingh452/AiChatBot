@@ -1,16 +1,31 @@
 import streamlit as st
 import requests
 
-st.title("🛍️ Shopify Support Bot")
+st.title("🛍️ Shopify Chatbot Assistant")
 
-user_input = st.text_input("You:", key="user_input")
+customer_id = st.text_input("Enter Customer ID 👤")
+question = st.text_input("Ask something... 🤖")
 
-if user_input:
-    res = requests.post("http://localhost:8000/shopify/shopify-chat", json={
-        "customer_id": "12345",
-        "question": user_input
-    })
+if st.button("Ask") and customer_id and question:
+    with st.spinner("Thinking..."):
+        try:
+            response = requests.post(
+                "http://localhost:8000/shopify/shopify-chat",
+                json={
+                    "customer_id": customer_id,
+                    "question": question
+                }
+            )
+            data = response.json()
 
-    bot_reply = res.json().get("reply")
+            # 🔍 DEBUGGING LINE
+            st.write("🧪 Response from backend:", data)
 
-    st.markdown(f"**Bot:** {bot_reply}")
+            # ✅ SAFELY try to access reply
+            if "reply" in data:
+                st.success("✅ Assistant replied:")
+                st.write(data["reply"])
+            else:
+                st.error("❌ 'reply' key not found in backend response.")
+        except Exception as e:
+            st.error(f"Something went wrong 😢: {e}")

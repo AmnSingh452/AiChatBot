@@ -12,3 +12,14 @@ app = FastAPI()
 # Register routes
 app.include_router(chatbot.router, prefix="/chatbot")
 app.include_router(shopify.router, prefix="/shopify")
+
+
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # For development only!
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
